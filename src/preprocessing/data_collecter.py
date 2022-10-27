@@ -37,7 +37,7 @@ structlog.stdlib.recreate_defaults()
 class DataCollecter(metaclass=ABCMeta):
     def __init__(self, catalog_url: HttpUrl):
         self.catalog_url = catalog_url
-        self.logger = structlog.stdlib.get_logger()
+        self.logger: BoundLogger = structlog.stdlib.get_logger()
         self.file_urls: list[HttpUrl] = []
         self.file_save_dir: Path
 
@@ -191,11 +191,13 @@ class OkinawaDataCollecter(DataCollecter):
         (error file is removed by func of is_error_link_of_okinawa)
         """
 
-        if "braket_pattern" not in globals():
-            # pattern compiling takes time. To use again compilled data, globalize this value.
-            # this braket_pattern transform 2010(1).xls into 2010.xls
-            global braket_pattern
-            braket_pattern: Pattern = re.compile(r"\(.*?\)")
+        braket_pattern: Pattern = re.compile(r"\(.*?\)")
+        # if "braket_pattern" not in globals():
+        #     # pattern compiling takes time. To use again compilled data, globalize this value.
+        #     # this braket_pattern transform 2010(1).xls into 2010.xls
+        #     print('init')
+        #     global braket_pattern
+        #     braket_pattern: Pattern = re.compile(r"\(.*?\)")
 
         return (
             braket_pattern.sub("", name)

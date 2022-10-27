@@ -45,13 +45,17 @@ def test_parse_xls_file_url_with_mock():
     with s.get(
         Path("./tests/mock_data/response_mock_at_2022_10_25.txt").absolute().as_uri()
     ) as mock_response:
-        assert 323 == len(OkinawaDataCollecter()._parse_xls_file_url(mock_response))
+        assert 323 == len(
+            OkinawaDataCollecter._parse_catalog_and_get_xls_file_urls(mock_response)
+        )
     del s
 
 
 def test_parse_xls_file_url_with_latest():
     latest_response = OkinawaDataCollecter()._requests_data_catalog_response()
-    assert 323 == len(OkinawaDataCollecter()._parse_xls_file_url(latest_response))
+    assert 323 == OkinawaDataCollecter._parse_catalog_and_get_xls_file_urls(
+        latest_response
+    )
 
 
 def test_download_file():
@@ -116,13 +120,13 @@ def test_collect_local_file_info():
         download_date="2022-10-26T02:18:51.375694+09:00",
     )
 
-    assert expect.name == dc._collect_local_file_info(a).name
-    assert expect.url == dc._collect_local_file_info(a).url
-    assert expect.hash_value == dc._collect_local_file_info(a).hash_value
-    assert expect.path == dc._collect_local_file_info(a).path
-    assert expect.download_date != dc._collect_local_file_info(a).download_date
+    assert expect.name == dc._make_local_info(a).name
+    assert expect.url == dc._make_local_info(a).url
+    assert expect.hash_value == dc._make_local_info(a).hash_value
+    assert expect.path == dc._make_local_info(a).path
+    assert expect.download_date != dc._make_local_info(a).download_date
     assert datetime.date(
-        datetime.fromisoformat(dc._collect_local_file_info(a).download_date)
+        datetime.fromisoformat(dc._make_local_info(a).download_date)
     ) == datetime.date(datetime.today())
 
 
