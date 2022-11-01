@@ -1,5 +1,13 @@
 # Fact Check Okinawa Vote Cheating
 
+属性込みの詳細な住民データがあることに気づいたので、これを使って構造時系列に対する異常検知の題材にする。
+
+参考
+https://nou-yunyun.hatenablog.com/entry/2020/09/11/162335
+https://factcheckcenter.jp/n/n0bd988ab4174
+
+
+
 [![PyPI](https://img.shields.io/pypi/v/fact-check-okinawa-vote-cheating.svg)][pypi status]
 [![Status](https://img.shields.io/pypi/status/fact-check-okinawa-vote-cheating.svg)][pypi status]
 [![Python Version](https://img.shields.io/pypi/pyversions/fact-check-okinawa-vote-cheating)][pypi status]
