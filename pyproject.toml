@@ -94,7 +94,6 @@ pep8-naming = "^0.13.2"
 pre-commit = "^2.20.0"
 pre-commit-hooks = ">=4.1.0"
 pylint = "^2.15.5"
-pylint = "^2.15.5"
 pyproject-flake8 = "^5.0.4.post1"
 pyre-check = "^0.9.16"
 pytest = "^7.1.3"
@@ -132,11 +131,21 @@ source = ["fact_check_okinawa_vote_cheating", "tests"]
 show_missing = true
 fail_under = 100
 
-[tool.isort]
-profile = "black"
-line_length = 88
-multi_line_output = 3
-include_trailing_comma = true
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 88
+
+disable = [
+  "missing-docstring",
+  "unused-argument",
+  "no-value-for-parameter",
+  "no-member",
+  "no-name-in-module",
+  "no-else-return",
+  "line-too-long",
+  "fixme",
+  "protected-access",
+  "too-few-public-methods",
+]
 
 [tool.mypy]
 strict = true
@@ -152,19 +161,19 @@ disallow-untyped-calls = true
 disallow-untyped-defs = true
 
 [tool.flake8]
-inline-quotes = "double"
-multiline-quotes = "'''"
 accept-encodings = "utf-8"
-max-line-length = 88
-max-complexity = 10
 docstring-convention = "google"
 docstring_style = "google"
-per-file-ignores = "tests/*:S101"
-rst-roles = "class,const,func,meth,mod,ref"
-rst-directives = "deprecated"
 enable-extensions="G"
-ignore = ["SC100","SC200","Q000","I001"]
-use_class_attributes_order_strict_mode = "True"
+ignore = ["ABS101","I001","I005","Q000","S109","SC100","SC200","SCS108", "W503"]
+inline-quotes = "double"
+max-complexity = 10
+max-line-length = 88
+multiline-quotes = "'''"
+per-file-ignores = "tests/*:S101"
+rst-directives = "deprecated"
+rst-roles = "class,const,func,meth,mod,ref"
+use_class_attributes_order_strict_mode = true
 
 [tool.pydocstyle]
 convention = "google"

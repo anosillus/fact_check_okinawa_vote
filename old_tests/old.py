@@ -54,9 +54,9 @@ from src.preprocessing.data_type import EventInfo
 #     assert 323 == len(current_xls_file_urls)
 
 
-def test_compare_mock_xls_file_and_current():
+def test_compare_mock_xls_file_with_current():
     # TODO
-    assert True
+    ...
 
 
 # def test_downloaded_file_contents():
