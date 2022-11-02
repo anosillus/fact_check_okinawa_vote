@@ -77,6 +77,4 @@ class FileListCollecter:
         if not file_name:
             file_name = "url_list_at_" + today() + ".json"
         json_path = Path(list_save_dir) / file_name
-        write_json_file(
-            json_path=json_path, data_dict=self.data_dict, logger=self.logger
-        )
+        write_json_file(json_path=json_path, data=self.data_dict, logger=self.logger)

@@ -135,5 +135,5 @@ class FileDownloader:
         data_dicts = sorted(data_dicts, key=operator.itemgetter("name"))
 
         write_json_file(
-            json_path=self.download_log_path, data_dict=data_dicts, logger=self.logger
+            json_path=self.download_log_path, data=data_dicts, logger=self.logger
         )

@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 from typing import NamedTuple
 from typing import Optional
+from typing import Union
 from zoneinfo import ZoneInfo
 
 from pydantic import FileUrl
@@ -37,10 +38,12 @@ def time_for_record():
 
 
 def write_json_file(
-    json_path: Path, data_dict: dict[str, str], logger: BoundLogger = None
+    json_path: Path,
+    data: Union[dict[str, str], list[dict[str, str]]],
+    logger: BoundLogger = None,
 ):
     with open(json_path, "w") as file:
-        json.dump(data_dict, file)
+        json.dump(data, file)
 
         if logger:
             logger.info("save data as json", json_path=json_path)

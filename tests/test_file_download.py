@@ -15,7 +15,9 @@ def test_downloaded_file_contents():
     trial_url = "https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls"
     with tempfile.NamedTemporaryFile() as tf:
         FileDownloader()._download_file(file_url=trial_url, file_path=Path(tf.name))
-        assert filecmp.cmp(tf.name, Path("./tests/mock_data/pop202209.xls"))
+        assert filecmp.cmp(
+            tf.name, Path("./tests/mock_data_at_2022_11_02/pop202209.xls")
+        )
 
 
 def test_download_multi_files():
@@ -29,32 +31,25 @@ def test_download_multi_files():
         fd.file_place = Path(td)
         fd.download_files(is_write_log=False)
         assert filecmp.cmp(
-            Path(Path(td) / "pop202209.xls"), Path("./tests/mock_data/pop202209.xls")
+            Path(Path(td) / "pop202209.xls"),
+            Path("./tests/mock_data_at_2022_11_02/pop202209.xls"),
         )
         assert filecmp.cmp(
-            Path(Path(td) / "199601r.xls"), Path("./tests/mock_data/199601r.xls")
+            Path(Path(td) / "199601r.xls"),
+            Path("./tests/mock_data_at_2022_11_02/199601r.xls"),
         )
-
-
-# def test_sha256sum():
-#     hash_local_202209 = (
-#         "b7b9fb4f75270c73bd3186ccce05877dd48ada3c4711c5bb34f46023a816bcac"
-#     )
-#     assert hash_local_202209 == DataDownlaoder()._sha256sum(
-#         Path("./tests/mock_data/pop202209.xls")
-#     )
 
 
 def test_event_log():
     a = {
         "name": "202209.xls",
         "url": "https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
-        "path": Path(Path("./tests/mock_data/pop202209.xls").resolve()),
+        "path": Path(Path("./tests/mock_data_at_2022_11_02/pop202209.xls").resolve()),
     }
     expect = DownloadLog(
         name="202209.xls",
         url="https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
-        path=str(Path("./tests/mock_data/pop202209.xls")),
+        path=str(Path("./tests/mock_data_at_2022_11_02/pop202209.xls")),
         hash_value="b7b9fb4f75270c73bd3186ccce05877dd48ada3c4711c5bb34f46023a816bcac",
         download_date="2022-10-26T02:18:51.375694+09:00",
     )
@@ -69,19 +64,18 @@ def test_event_log():
     ) == datetime.date(datetime.today())
 
 
-# def test_save_download_log():
-#     dc = DataDownlaoder()
-#     local_info = EventInfo(
-#         name="202209.xls",
-#         url="https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
-#         path=str(Path("./tests/mock_data/pop202209.xls")),
-#         hash_value="b7b9fb4f75270c73bd3186ccce05877dd48ada3c4711c5bb34f46023a816bcac",
-#         download_date="2022-10-26T02:18:51.375694+09:00",
-#     )
-#     with tempfile.TemporaryDirectory() as td:
-#         dc.json_dir = Path(td)
-#         dc.download_event_log = [local_info]
-#         dc.json_name = "data.json"
-#         dc.save_log()
-#         with open(Path(td) / "data.json") as data_file:
-#             assert json.load(data_file) == [local_info._asdict()]
+def test_write_log():
+    fc = FileDownloader()
+    a_log = DownloadLog(
+        name="202209.xls",
+        url="https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
+        path=str(Path("./tests/mock_data_at_2022_11_02/pop202209.xls")),
+        hash_value="b7b9fb4f75270c73bd3186ccce05877dd48ada3c4711c5bb34f46023a816bcac",
+        download_date="2022-10-26T02:18:51.375694+09:00",
+    )
+    with tempfile.NamedTemporaryFile(suffix=".json") as tf:
+        fc.download_log_path = Path(tf.name)
+        fc.download_logs = [a_log]
+        fc._write_log()
+        with open(tf.name) as name:
+            assert json.load(name) == [a_log._asdict()]
