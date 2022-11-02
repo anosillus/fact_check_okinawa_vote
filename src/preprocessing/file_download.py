@@ -27,7 +27,7 @@ class FileDownloader:
         self.urls_dict_path = urls_dict_path
         self.file_place: Path = default_data_dir()
         self.logger: BoundLogger = structlog.stdlib.get_logger()
-        self.urls: list[FileUrl] = []
+        self.file_urls: list[FileUrl] = []
         self.download_logs: list[DownloadLog] = []
         self.download_log_path = Path(
             default_data_dir() / ("download_log_" + today() + ".json")
@@ -50,7 +50,7 @@ class FileDownloader:
 
     @staticmethod
     def _download_file(file_url: FileUrl, file_path: Path) -> None:
-        res = requests.get(file_url, stream=True, timeout=10)
+        res = requests.get(file_url, stream=True, timeout=20)
         with tqdm.wrapattr(
             open(file_path, "wb"),
             "write",
@@ -88,15 +88,15 @@ class FileDownloader:
     def read_target_urls(self) -> None:
         urls_json_data = read_json_file(self.urls_dict_path)
 
-        self.urls = urls_json_data.get("urls")
+        self.file_urls = urls_json_data.get("urls")
         self.logger.info(
             "result of json data read",
             json_path=self.urls_dict_path,
             file_downloaded_date=urls_json_data.get("date"),
-            urls_amount=len(self.urls),
+            urls_amount=len(self.file_urls),
         )
 
-    def download_files(self) -> None:
+    def download_files(self, is_write_log=True) -> None:
         urllib3_logger = logging.getLogger("urllib3")
         urllib3_logger.setLevel(logging.CRITICAL)
         self.file_place.mkdir(exist_ok=True)
@@ -105,12 +105,15 @@ class FileDownloader:
             for file_url in tqdm(self.file_urls):
                 file_name = Path(file_url).name
                 file_path = Path(self.file_place / file_name)
-                name = self._remove_file_name_noise(file_name)
 
                 self._download_file(file_url=file_url, file_path=file_path)
-                self.download_logs.append(
-                    self._shape_log(name=name, url=file_url, path=file_path)
-                )
+
+                if is_write_log:
+                    name = self._remove_file_name_noise(file_name)
+
+                    self.download_logs.append(
+                        self._shape_log(name=name, url=file_url, path=file_path)
+                    )
 
         except RequestException as err:
             self.logger.info(
@@ -122,11 +125,12 @@ class FileDownloader:
             )
 
         finally:
-            self._write_log()
+            if is_write_log:
+                self._write_log()
 
     def _write_log(self):
         data_dicts: list[dict[str, str]] = [
-            info._asdict() for info in self.download_log
+            info._asdict() for info in self.download_logs
         ]
         data_dicts = sorted(data_dicts, key=operator.itemgetter("name"))
 

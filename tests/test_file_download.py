@@ -17,23 +17,23 @@ def test_downloaded_file_contents():
         assert filecmp.cmp(tf.name, Path("./tests/mock_data/pop202209.xls"))
 
 
-# def test_download_multi_files():
-#     test_file_urls = [
-#         "https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
-#         "https://www.pref.okinawa.jp/toukeika/estimates/1996/199601r.xls",
-#     ]
-#     dc = DataDownlaoder()
-#     dc.file_urls = test_file_urls
-#     with tempfile.TemporaryDirectory() as td:
-#         dc.file_save_dir = Path(td)
-#         dc.json_dir = Path(td)
-#         dc.download_files()
-#         assert filecmp.cmp(
-#             Path(Path(td) / "pop202209.xls"), Path("./tests/mock_data/pop202209.xls")
-#         )
-#         assert filecmp.cmp(
-#             Path(Path(td) / "199601r.xls"), Path("./tests/mock_data/199601r.xls")
-#         )
+def test_download_multi_files():
+    test_file_urls = [
+        "https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
+        "https://www.pref.okinawa.jp/toukeika/estimates/1996/199601r.xls",
+    ]
+    fd = FileDownloader()
+    fd.file_urls = test_file_urls
+    with tempfile.TemporaryDirectory() as td:
+        fd.file_place = Path(td)
+        fd.download_files(is_write_log=False)
+        assert filecmp.cmp(
+            Path(Path(td) / "pop202209.xls"), Path("./tests/mock_data/pop202209.xls")
+        )
+        assert filecmp.cmp(
+            Path(Path(td) / "199601r.xls"), Path("./tests/mock_data/199601r.xls")
+        )
+
 
 # def test_sha256sum():
 #     hash_local_202209 = (
