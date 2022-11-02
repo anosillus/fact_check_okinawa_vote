@@ -20,7 +20,7 @@ from .util import write_json_file
 
 
 class FileListCollecter:
-    def __init__(self):
+    def __init__(self, result_path: Path = None):
         self.catalog_url: Final[
             HttpUrl
         ] = "https://www.pref.okinawa.jp/toukeika/estimates/estidata.html"
@@ -28,6 +28,11 @@ class FileListCollecter:
         self.res: Response
         self.url_list: list[FileUrl]
         self.data_dict: dict[str, str | list[FileUrl]]
+
+        if not result_path:
+            result_path = default_data_dir() / ("url_list_at_" + today() + ".json")
+
+        self.result_path = result_path
 
     def run(self) -> None:
         self.request_catalog_data()
@@ -70,11 +75,7 @@ class FileListCollecter:
             "urls": sorted(self.url_list),
         }
 
-    def write_url_data(self, file_name: str = "", list_save_dir: Optional[Path] = None):
-        if not list_save_dir:
-            list_save_dir = default_data_dir()
-
-        if not file_name:
-            file_name = "url_list_at_" + today() + ".json"
-        json_path = Path(list_save_dir) / file_name
-        write_json_file(json_path=json_path, data=self.data_dict, logger=self.logger)
+    def write_url_data(self):
+        write_json_file(
+            json_path=self.result_path, data=self.data_dict, logger=self.logger
+        )

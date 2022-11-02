@@ -8,6 +8,7 @@ from typing import Optional
 
 import requests
 from requests_file import FileAdapter
+
 from src.preprocessing.file_list_collect import FileListCollecter
 
 
@@ -59,12 +60,11 @@ def test_write_parser_results():
     mock_urls = ["https://www.amazon.com", "https://www.google.com"]
 
     fc.url_list = mock_urls
-    with tempfile.TemporaryDirectory() as list_save_dir:
-        file_name = "hoge.json"
+    with tempfile.NamedTemporaryFile(suffix="json") as tf:
+        fc.result_path = tf.name
         fc.make_readable_dict()
-        fc.write_url_data(file_name=file_name, list_save_dir=list_save_dir)
-        json_path = Path(list_save_dir) / file_name
-        value = json.load(open(json_path))
+        fc.write_url_data()
+        value = json.load(open(tf.name))
     time_at_write = dt.datetime.fromisoformat(value.get("date"))
     assert dt.datetime.date(time_at_write) == dt.datetime.date(dt.datetime.today())
     assert value.get("urls") == mock_urls
