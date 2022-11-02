@@ -69,14 +69,14 @@ class FileDownloader:
     @staticmethod
     def _shape_log(name, url, path) -> DownloadLog:
         try:
-            relpath = str(path.relative_to(ROOT_DIR))
+            relpath = path.relative_to(ROOT_DIR)
         except ValueError:
-            relpath = str(path)
+            relpath = path
 
         return DownloadLog(
             name=name,
             url=url,
-            path=relpath,
+            path=str(relpath),
             hash_value=sha256sum(path),
             download_date=time_for_record(),
         )

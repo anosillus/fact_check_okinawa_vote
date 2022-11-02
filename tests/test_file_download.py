@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 import requests
+from preprocessing.util import DownloadLog
 from requests_file import FileAdapter
 
 from src.preprocessing.file_download import FileDownloader
@@ -44,30 +45,28 @@ def test_download_multi_files():
 #     )
 
 
-# def test_event_log():
-#     dc = DataDownlaoder()
-#     dc.file_save_dir = Path("./tests/mock_data").absolute()
+def test_event_log():
+    a = {
+        "name": "202209.xls",
+        "url": "https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
+        "path": Path(Path("./tests/mock_data/pop202209.xls").resolve()),
+    }
+    expect = DownloadLog(
+        name="202209.xls",
+        url="https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
+        path=str(Path("./tests/mock_data/pop202209.xls")),
+        hash_value="b7b9fb4f75270c73bd3186ccce05877dd48ada3c4711c5bb34f46023a816bcac",
+        download_date="2022-10-26T02:18:51.375694+09:00",
+    )
 
-#     a = {
-#         "name": "pop202209.xls",
-#         "url": "https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
-#     }
-#     expect = EventInfo(
-#         name="202209.xls",
-#         url="https://www.pref.okinawa.jp/toukeika/estimates/2022/pop202209.xls",
-#         path=str(Path("./tests/mock_data/pop202209.xls")),
-#         hash_value="b7b9fb4f75270c73bd3186ccce05877dd48ada3c4711c5bb34f46023a816bcac",
-#         download_date="2022-10-26T02:18:51.375694+09:00",
-#     )
-
-#     assert expect.name == dc._shape_event_log(**a).name
-#     assert expect.url == dc._shape_event_log(**a).url
-#     assert expect.hash_value == dc._shape_event_log(**a).hash_value
-#     assert expect.path == dc._shape_event_log(**a).path
-#     assert expect.download_date != dc._shape_event_log(**a).download_date
-#     assert datetime.date(
-#         datetime.fromisoformat(dc._shape_event_log(**a).download_date)
-#     ) == datetime.date(datetime.today())
+    assert expect.name == FileDownloader()._shape_log(**a).name
+    assert expect.url == FileDownloader()._shape_log(**a).url
+    assert expect.hash_value == FileDownloader()._shape_log(**a).hash_value
+    assert expect.path == FileDownloader()._shape_log(**a).path
+    assert expect.download_date != FileDownloader()._shape_log(**a).download_date
+    assert datetime.date(
+        datetime.fromisoformat(FileDownloader()._shape_log(**a).download_date)
+    ) == datetime.date(datetime.today())
 
 
 # def test_save_download_log():
