@@ -18,8 +18,8 @@ from .data_path import ROOT_DIR
 
 class DownloadLog(NamedTuple):
     name: str
-    url: FileUrl
-    path: Path
+    url: str
+    path: str
     hash_value: str
     download_date: str
 

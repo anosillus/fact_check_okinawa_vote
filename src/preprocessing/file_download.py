@@ -23,19 +23,19 @@ from .util import write_json_file
 
 
 class FileDownloader:
-    def __init__(self, urls_dict_path: Path):
+    def __init__(self, urls_dict_path: Path = None):
         self.urls_dict_path = urls_dict_path
         self.file_place: Path = default_data_dir()
         self.logger: BoundLogger = structlog.stdlib.get_logger()
         self.urls: list[FileUrl] = []
         self.download_logs: list[DownloadLog] = []
         self.download_log_path = Path(
-            default_data_dir() / "download_log_" + today() + ".json"
+            default_data_dir() / ("download_log_" + today() + ".json")
         )
 
     @staticmethod
-    def _remove_catalog_file_name_noise(name: str) -> str:
-        """This function remove the noise in name of okinawa statistics data files."""
+    def _remove_file_name_noise(name: str) -> str:
+        # This function remove the noise in name of okinawa statistics data files.
         braket_pattern: Pattern[str] = r"\(.*?\)"
         # re.compile is faster, but I don't use that for clean global scoope.
         # this braket_pattern transform 2010(1).xls into 2010.xls
@@ -46,21 +46,6 @@ class FileDownloader:
             .replace("r", "")
             .replace("_1", "")
             .replace("pop", "")
-        )
-
-    def run(self) -> None:
-        self.read_target_urls()
-        self.download_files()
-
-    def read_target_urls(self) -> None:
-        urls_json_data = read_json_file(self.urls_dict_path)
-
-        self.urls = urls_json_data.get("urls")
-        self.logger.info(
-            "result of json data read",
-            json_path=self.urls_dict_path,
-            file_downloaded_date=urls_json_data.get("date"),
-            urls_amount=len(self.urls),
         )
 
     @staticmethod
@@ -81,6 +66,36 @@ class FileDownloader:
             for chunk in res.iter_content(chunk_size=4096):
                 file.write(chunk)
 
+    @staticmethod
+    def _shape_log(name, url, path) -> DownloadLog:
+        try:
+            relpath = str(path.relative_to(ROOT_DIR))
+        except ValueError:
+            relpath = str(path)
+
+        return DownloadLog(
+            name=name,
+            url=url,
+            path=relpath,
+            hash_value=sha256sum(path),
+            download_date=time_for_record(),
+        )
+
+    def run(self) -> None:
+        self.read_target_urls()
+        self.download_files()
+
+    def read_target_urls(self) -> None:
+        urls_json_data = read_json_file(self.urls_dict_path)
+
+        self.urls = urls_json_data.get("urls")
+        self.logger.info(
+            "result of json data read",
+            json_path=self.urls_dict_path,
+            file_downloaded_date=urls_json_data.get("date"),
+            urls_amount=len(self.urls),
+        )
+
     def download_files(self) -> None:
         urllib3_logger = logging.getLogger("urllib3")
         urllib3_logger.setLevel(logging.CRITICAL)
@@ -89,11 +104,13 @@ class FileDownloader:
         try:
             for file_url in tqdm(self.file_urls):
                 file_name = Path(file_url).name
-                self._download_file(
-                    file_url=file_url,
-                    file_path=Path(self.file_place / file_name),
+                file_path = Path(self.file_place / file_name)
+                name = self._remove_file_name_noise(file_name)
+
+                self._download_file(file_url=file_url, file_path=file_path)
+                self.download_logs.append(
+                    self._shape_log(name=name, url=file_url, path=file_path)
                 )
-                self.download_logs.append(self._shape_log(name=file_name, url=file_url))
 
         except RequestException as err:
             self.logger.info(
@@ -115,18 +132,4 @@ class FileDownloader:
 
         write_json_file(
             json_path=self.download_log_path, data_dict=data_dicts, logger=self.logger
-        )
-
-    def _shape_log(self, name, url):
-        try:
-            path = str(self.file_path.relative_to(ROOT_DIR))
-        except ValueError:
-            path = str(self.file_path)
-
-        return DownloadLog(
-            name=self._remove_catalog_file_name_noise(name),
-            url=url,
-            path=path,
-            hash_value=sha256sum(path),
-            download_date=time_for_record(),
         )
