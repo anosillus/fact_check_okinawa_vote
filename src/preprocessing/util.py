@@ -1,16 +1,27 @@
 """This module is for util functions for preprocessing."""
 import datetime as dt
+import hashlib
 import json
 import operator
 from pathlib import Path
 from typing import Any
+from typing import NamedTuple
 from typing import Optional
 from zoneinfo import ZoneInfo
 
+from pydantic import FileUrl
 from structlog.stdlib import BoundLogger
 
 from .data_path import RAW_DATA_DIR
 from .data_path import ROOT_DIR
+
+
+class DownloadLog(NamedTuple):
+    name: str
+    url: FileUrl
+    path: Path
+    hash_value: str
+    download_date: str
 
 
 def today():
@@ -35,8 +46,20 @@ def write_json_file(
             logger.info("save data as json", json_path=json_path)
 
 
-def read_json_data(json_path: Optional[Path] = None):
+def read_json_file(json_path: Optional[Path] = None):
     return json.load(open(json_path))
+
+
+def sha256sum(file_path: Path) -> str:
+    # https://stackoverflow.com/questions/22058048/hashing-a-file-in-python
+    h = hashlib.sha256()
+    b = bytearray(128 * 1024)
+    mv = memoryview(b)
+    with open(file_path, "rb", buffering=0) as f:
+        while n := f.readinto(mv):
+            h.update(mv[:n])
+
+    return h.hexdigest()
 
 
 # def sort_dicts_by_name(dicts: list[dict[str, Any]]) -> list[dict[str, Any]]:

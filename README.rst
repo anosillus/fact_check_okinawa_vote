@@ -5,7 +5,7 @@
 参考
 https://nou-yunyun.hatenablog.com/entry/2020/09/11/162335
 https://factcheckcenter.jp/n/n0bd988ab4174
-
+https://www.genron.tv/ch/sakura-live/column/vol?id=113
 
 
 [![PyPI](https://img.shields.io/pypi/v/fact-check-okinawa-vote-cheating.svg)][pypi status]
