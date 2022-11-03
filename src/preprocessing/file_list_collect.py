@@ -11,12 +11,11 @@ from pydantic import FileUrl
 from pydantic import HttpUrl
 from requests import RequestException
 from requests import Response
+from src.preprocessing.util import default_data_dir
+from src.preprocessing.util import time_for_record
+from src.preprocessing.util import today
+from src.preprocessing.util import write_json_file
 from structlog import BoundLogger
-
-from .util import default_data_dir
-from .util import time_for_record
-from .util import today
-from .util import write_json_file
 
 
 class FileListCollecter:
@@ -59,7 +58,7 @@ class FileListCollecter:
         def is_active_link_of_okinawa(link: str) -> bool:
             # "2019/pop201904r  (2).xls" is a dead link.
 
-            return link != "2019/pop201904r  (2).xls"
+            return "(2).xls" not in link
 
         self.url_list: list[FileUrl] = [
             urljoin(self.res.url, link.get("href"))
@@ -76,6 +75,8 @@ class FileListCollecter:
         }
 
     def write_url_data(self):
+        Path(self.result_path.parent).mkdir(exist_ok=True)
+
         write_json_file(
             json_path=self.result_path, data=self.data_dict, logger=self.logger
         )

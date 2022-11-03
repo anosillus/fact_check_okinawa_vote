@@ -10,6 +10,7 @@ from pydantic import FileUrl
 from pydantic import HttpUrl
 from requests import RequestException
 from requests import Response
+
 from src.preprocessing import util
 
 
@@ -24,3 +25,7 @@ def test_sha256sum():
     assert hash_local_202209 == util.sha256sum(
         Path("./tests/mock_data_at_2022_11_02/pop202209.xls")
     )
+
+
+def test_write_json_file():
+    ...

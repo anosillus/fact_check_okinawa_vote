@@ -7,19 +7,19 @@ from re import Pattern
 
 import requests
 import structlog
+from preprocessing.util import default_data_dir
+from preprocessing.util import DownloadLog
+from preprocessing.util import read_json_file
+from preprocessing.util import sha256sum
+from preprocessing.util import time_for_record
+from preprocessing.util import today
+from preprocessing.util import write_json_file
 from pydantic import FileUrl
 from requests import RequestException
 from structlog import BoundLogger
 from tqdm.auto import tqdm
 
-from .data_path import ROOT_DIR
-from .util import default_data_dir
-from .util import DownloadLog
-from .util import read_json_file
-from .util import sha256sum
-from .util import time_for_record
-from .util import today
-from .util import write_json_file
+from src.util.data_path import ROOT_DIR
 
 
 class FileDownloader:
@@ -29,8 +29,8 @@ class FileDownloader:
         self.logger: BoundLogger = structlog.stdlib.get_logger()
         self.file_urls: list[FileUrl] = []
         self.download_logs: list[DownloadLog] = []
-        self.download_log_path = Path(
-            default_data_dir() / ("download_log_" + today() + ".json")
+        self.download_log_path = default_data_dir() / (
+            "download_log_" + today() + ".json"
         )
 
     @staticmethod

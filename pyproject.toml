@@ -13,6 +13,13 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",
 ]
+packages = [
+  { include = "preprocessing", from = "src" },
+  { include = "util", from = "src" },
+
+  { include = "data_arrange", from = "src" },
+
+]
 
 [tool.poetry.urls]
 Changelog = "https://github.com/todesking2/fact-check-okinawa-vote-cheating/releases"
@@ -116,8 +123,30 @@ typeguard = "^2.13.3"
 wget = "^3.2"
 xdoctest = {extras = ["colors"], version = ">=0.15.10"}
 
-[tool.poetry.scripts]
-fact-check-okinawa-vote-cheating = "fact_check_okinawa_vote_cheating.__main__:main"
+
+[tool.poetry.group.dev.dependencies]
+pytest-mypy = "^0.10.0"
+
+[virtualenvs]
+in-project = true
+
+# [tool.poetry.scripts]
+# fact-check-okinawa-vote-cheating = "fact_check_okinawa_vote_cheating.__main__:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# pythonpath = 'src'
+pythonpath = [".", "src", "./src/preprocessing" ]
+filterwarnings = ["ignore::DeprecationWarning",]
+addopts = [
+  "-v",
+  "--strict-config",
+  "--strict-markers",
+  "--picked",
+  "--cov=src",
+  "--cov-branch",
+  "--no-cov-on-fail",
+  ]
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]

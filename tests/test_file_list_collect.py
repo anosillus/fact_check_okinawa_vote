@@ -9,7 +9,7 @@ from typing import Optional
 import requests
 from requests_file import FileAdapter
 
-from src.preprocessing.file_list_collect import FileListCollecter
+from preprocessing.file_list_collect import FileListCollecter
 
 
 def test_target_url():
@@ -25,13 +25,13 @@ def test_network_connection():
     assert fc.res.ok
 
 
-def test_is_connectable_target():
+def test_requests_catalog_data():
     fc = FileListCollecter()
     fc.request_catalog_data()
     assert fc.res.ok
 
 
-def test_parser_with_mock_data():
+def test_collect_url_from_cataglo():
     s = requests.Session()
     s.mount("", FileAdapter())
     with s.get(
@@ -61,7 +61,7 @@ def test_write_parser_results():
 
     fc.url_list = mock_urls
     with tempfile.NamedTemporaryFile(suffix="json") as tf:
-        fc.result_path = tf.name
+        fc.result_path = Path(tf.name)
         fc.make_readable_dict()
         fc.write_url_data()
         value = json.load(open(tf.name))

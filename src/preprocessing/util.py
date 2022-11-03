@@ -13,8 +13,7 @@ from zoneinfo import ZoneInfo
 from pydantic import FileUrl
 from structlog.stdlib import BoundLogger
 
-from .data_path import RAW_DATA_DIR
-from .data_path import ROOT_DIR
+from src.util.data_path import RAW_DATA_DIR
 
 
 class DownloadLog(NamedTuple):
@@ -25,7 +24,7 @@ class DownloadLog(NamedTuple):
     download_date: str
 
 
-def today():
+def today() -> str:
     return str(dt.datetime.date(dt.datetime.today()))
 
 
@@ -33,7 +32,7 @@ def default_data_dir() -> Path:
     return RAW_DATA_DIR / today()
 
 
-def time_for_record():
+def time_for_record() -> str:
     return dt.datetime.now(ZoneInfo("Asia/Tokyo")).replace(microsecond=0).isoformat()
 
 
@@ -42,7 +41,7 @@ def write_json_file(
     data: Union[dict[str, str], list[dict[str, str]]],
     logger: BoundLogger = None,
 ):
-    with open(json_path, "w") as file:
+    with open(json_path, "a") as file:
         json.dump(data, file)
 
         if logger:
@@ -63,10 +62,3 @@ def sha256sum(file_path: Path) -> str:
             h.update(mv[:n])
 
     return h.hexdigest()
-
-
-# def sort_dicts_by_name(dicts: list[dict[str, Any]]) -> list[dict[str, Any]]:
-# return sorted(dicts, key=operator.itemgetter("name"))
-
-
-# vim: ft=python ts=4 sw=4 sts=4 tw=88 fenc=utf-8 ff=unix si et:

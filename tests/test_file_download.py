@@ -5,10 +5,9 @@ from datetime import datetime
 from pathlib import Path
 
 import requests
+from preprocessing.file_download import FileDownloader
 from preprocessing.util import DownloadLog
 from requests_file import FileAdapter
-
-from src.preprocessing.file_download import FileDownloader
 
 
 def test_downloaded_file_contents():
