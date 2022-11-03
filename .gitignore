@@ -7,6 +7,7 @@ poetry.lock
 .venv
 .env
 .envrc
+report.xml
 
 __pycache__/
 *.py[cod]
