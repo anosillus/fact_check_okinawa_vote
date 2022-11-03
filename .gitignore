@@ -3,6 +3,10 @@
 /.python-version
 /.pytype/
 /docs/_build/
+poetry.lock
+.venv
+.env
+.envrc
 
 __pycache__/
 *.py[cod]
