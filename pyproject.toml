@@ -14,11 +14,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
 ]
 packages = [
-  { include = "preprocessing", from = "src" },
-  { include = "util", from = "src" },
-
-  { include = "data_arrange", from = "src" },
-
+  { include = "src"}
 ]
 
 [tool.poetry.urls]
@@ -136,7 +132,7 @@ in-project = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # pythonpath = 'src'
-pythonpath = [".", "src", "./src/preprocessing" ]
+pythonpath = [".", "src"]
 filterwarnings = ["ignore::DeprecationWarning",]
 addopts = [
   "-v",

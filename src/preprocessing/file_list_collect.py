@@ -11,11 +11,12 @@ from pydantic import FileUrl
 from pydantic import HttpUrl
 from requests import RequestException
 from requests import Response
+from structlog import BoundLogger
+
 from src.preprocessing.util import default_data_dir
 from src.preprocessing.util import time_for_record
 from src.preprocessing.util import today
 from src.preprocessing.util import write_json_file
-from structlog import BoundLogger
 
 
 class FileListCollecter:
